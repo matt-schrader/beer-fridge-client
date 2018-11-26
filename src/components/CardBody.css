@@ -1,0 +1,8 @@
+.CardBody {
+    padding: 12px;
+    color: rgb(201, 206, 211);
+}
+
+.CardBody.centered {
+    text-align: center;
+}

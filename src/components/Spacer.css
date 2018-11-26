@@ -1,0 +1,19 @@
+.padTop {
+    padding-top: 12px;
+}
+
+.padRight {
+    padding-right: 12px;
+}
+
+.padBottom {
+    padding-bottom: 12px;
+}
+
+.padLeft {
+    padding-left: 12px;
+}
+
+.pad {
+    padding: 12px;
+}

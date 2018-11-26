@@ -1,0 +1,7 @@
+.CardHeader {
+    display: flex;
+    padding: 12px;
+    color: #60DAFB;
+    font-size: 1.5rem;
+    align-items: center;
+}

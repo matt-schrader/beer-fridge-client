@@ -3,15 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@feathersjs/feathers": "^3.2.3",
+    "@feathersjs/socketio-client": "^1.1.5",
+    "@types/feathersjs__feathers": "^3.0.5",
+    "@types/feathersjs__socketio-client": "^1.0.1",
+    "@types/lodash": "^4.14.118",
+    "@types/socket.io-client": "^1.4.32",
+    "express": "^4.16.4",
+    "express-http-proxy": "^1.5.0",
+    "mobx": "^5.6.0",
+    "mobx-react": "^5.3.6",
     "react": "^16.6.1",
+    "react-app-rewire-mobx": "^1.0.9",
     "react-dom": "^16.6.1",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "socket.io-client": "^2.1.1",
+    "typescript": "^3.1.6"
   },
+  "proxy": "http://localhost:3030/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "docker-build": "docker build -t beer-fridge-client .",
+    "docker-run": "docker run -p 3333:3333 -e PROXY_HOST=beer-fridge:3030 -d --link beer-fridge --name beer-fridge-client beer-fridge-client"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -21,5 +37,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^10.12.3",
+    "@types/react": "^16.4.18",
+    "@types/react-dom": "^16.0.9"
+  }
 }

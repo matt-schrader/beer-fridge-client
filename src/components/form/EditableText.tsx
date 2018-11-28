@@ -1,5 +1,6 @@
 import React, { ChangeEvent, KeyboardEvent } from 'react'
 import '../index.css'
+import './EditableText.css'
 
 interface Props {
     onEdit: (value: string) => void
@@ -70,7 +71,7 @@ export default class EditableText extends React.Component<Props, StateProps> {
         const { value, error } = this.state
 
         return (
-            <span>
+            <span className="EditableText">
                 <input type="text" value={value} onChange={this.handleChange} autoFocus />
                 {error && <div className="error">{error}</div>}
             </span>
@@ -84,7 +85,7 @@ export default class EditableText extends React.Component<Props, StateProps> {
         }
 
         return (
-            <span>{children}</span>
+            <span className="EditableText">{children}</span>
         )
     }
 }

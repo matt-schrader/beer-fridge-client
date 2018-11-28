@@ -2,7 +2,10 @@
     width: 220px;
     background-color: #2f3542;
     margin: 12px;
-    transition: cubic-bezier(0.075, 0.82, 0.165, 1)
+}
+
+.Mobile .Card {
+    width: 100%;
 }
 
 .Card.Modal {

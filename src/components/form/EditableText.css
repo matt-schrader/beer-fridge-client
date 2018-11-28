@@ -1,0 +1,15 @@
+.EditableText input {
+    border: none;
+    border-radius: 8px;
+    min-height: 28px;
+    padding: 4px 8px;
+    font-size: inherit;
+    color: inherit;
+    transition: all .2s;
+}
+
+.EditableText input:focus {
+    border: none;
+    outline: none;
+    box-shadow: 3px 3px 13px #111111;
+}

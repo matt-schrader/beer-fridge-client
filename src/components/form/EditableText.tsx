@@ -4,10 +4,10 @@ import '../index.css'
 interface Props {
     onEdit: (value: string) => void
     children: string | number
+    editing: boolean
 }
 
 interface StateProps {
-    editing: boolean
     value: string
     error?: string
 }
@@ -16,13 +16,21 @@ export default class EditableText extends React.Component<Props, StateProps> {
     public constructor(props: Props) {
         super(props)
         this.state = {
-            editing: false,
             value: ""
         }
     }
 
+    public componentWillReceiveProps(next: Props) {
+        const { editing } = this.props
+        if (!editing && next.editing) {
+            this.enterEditing()
+        } else if (editing && !next.editing) {
+            this.closeEditing()
+        }
+    }
+
     private handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { editing } = this.state
+        const { editing } = this.props
         if (editing) {
             this.setState({
                 value: event.target.value
@@ -30,24 +38,16 @@ export default class EditableText extends React.Component<Props, StateProps> {
         }
     }
 
-    private handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            this.closeEditing()
-        }
-    }
-
     private enterEditing = () => {
         const { children } = this.props;
-        const { editing } = this.state
         this.setState({
-            editing: !editing,
             value: `${children}`
         })
     }
 
     private closeEditing = () => {
-        const { editing, value } = this.state
-        const { onEdit } = this.props
+        const { value } = this.state
+        const { editing, onEdit } = this.props
         if (editing) {
             let error = false
             try {
@@ -60,7 +60,6 @@ export default class EditableText extends React.Component<Props, StateProps> {
             }
             if (!error) {
                 this.setState({
-                    editing: false,
                     error: undefined
                 })
             }
@@ -71,22 +70,21 @@ export default class EditableText extends React.Component<Props, StateProps> {
         const { value, error } = this.state
 
         return (
-            <div>
-                <input type="text" value={value} onChange={this.handleChange} onKeyPress={this.handleKeyPress} onBlur={this.closeEditing} autoFocus />
+            <span>
+                <input type="text" value={value} onChange={this.handleChange} autoFocus />
                 {error && <div className="error">{error}</div>}
-            </div>
+            </span>
         )
     }
 
     public render() {
-        const { children } = this.props
-        const { editing } = this.state
+        const { children, editing } = this.props
         if (editing) {
             return this.renderEditing()
         }
 
         return (
-            <span onDoubleClick={this.enterEditing}>{children}</span>
+            <span>{children}</span>
         )
     }
 }

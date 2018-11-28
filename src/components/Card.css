@@ -2,4 +2,14 @@
     width: 220px;
     background-color: #2f3542;
     margin: 12px;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1)
+}
+
+.Card.Modal {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    width: unset;
 }

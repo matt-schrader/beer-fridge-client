@@ -22,14 +22,14 @@ export default class Device {
     }
 
     @computed get currentTemperatureDisplay() {
-        return this.formatTemp(appStore.temperatureUnit, this.currentTemperature)
+        return this.formatTemp(appStore.temperatureUnit, this.currentTemperature, 2)
     }
 
     @computed get targetTemperatureDisplay() {
         return this.formatTemp(appStore.temperatureUnit, this.targetTemperature)
     }
 
-    private formatTemp(unit: TemperatureUnit, temperature?: number) {
+    private formatTemp(unit: TemperatureUnit, temperature?: number, decimalPlaces?: number) {
         if (temperature === undefined) {
             return '-'
         }
@@ -38,7 +38,9 @@ export default class Device {
         if (unit === TemperatureUnit.Fahrenheit) {
             value = (value * 9/5) + 32
         }
-        return `${value}${appStore.temperatureUnit === TemperatureUnit.Celsius ? 'C' : 'F'}`
+        let valueString = `${value}`
+        valueString = decimalPlaces ? parseFloat(valueString).toFixed(decimalPlaces) : valueString
+        return `${valueString}${appStore.temperatureUnit === TemperatureUnit.Celsius ? 'C' : 'F'}`
     }
 
     private isFormattedValue(formatted: string) {

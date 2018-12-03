@@ -1,4 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is the Web UI for controlling your beer fridge.  Well, for now.  Ultimately this project should be capable of controlling all brewing equipment.  Or, at least the equipment that people that maintain this project are interested in.
+
+Here is a glimpse at the UI monitoring my Keezer.
+![Matt's Keezer](docs/Keezer.png)
 
 ## Available Scripts
 

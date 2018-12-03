@@ -1,17 +1,23 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { observable } from 'mobx'
 import featherClient from '../service/FeatherService'
 import Device from '../model/Device'
-import { Application, Service } from '@feathersjs/feathers';
+import { Application, Service, Paginated } from '@feathersjs/feathers';
 
 export class DeviceStore {
   private deviceService: Service<any>
+  private temperatureLogService: Service<any>
   @observable devices: Array<Device> = []
 
   public constructor(feathers: Application<object>) {
     this.deviceService = feathers.service('device')
     this.deviceService.on('patched', this.updateDevice)
     this.deviceService.on('updated', this.updateDevice)
+    this.deviceService.on('created', this.updateDevice)
+
+    this.temperatureLogService = feathers.service('temperature-log')
+    this.temperatureLogService.on('created', this.temperatureLogged)
 
     this.initDevices()
   }
@@ -35,11 +41,37 @@ export class DeviceStore {
     return deviceModel
   }
 
+  private temperatureLogged = (tempLog: any) => {
+    if (tempLog && tempLog.deviceId) {
+      const deviceIdx = _.findIndex(this.devices, nextDevice => nextDevice.id === tempLog.deviceId)
+      this.devices[deviceIdx].logTemp(tempLog)
+    }
+  }
+
   private async initDevices() {
     const devices = await this.deviceService.find() as Array<Device>
-    this.devices = _.map(_.orderBy(devices, ['name', 'id']), device => {
-      return this.createDevice(device)
-    })
+    this.devices = await Promise.all(_.map(_.orderBy(devices, ['name', 'id']), async (nextDevice) => {
+      const device = this.createDevice(nextDevice)
+      const startTime = moment.utc().subtract(1, 'hour').format()
+      const deviceTemps: Paginated<any> = await this.temperatureLogService.find({
+        query: {
+          deviceId: device.id,
+          time: {
+            $gte: startTime
+          },
+          $sort: {
+            time: 1
+          },
+          $limit: 100
+        }
+      }) as Paginated<any>
+      console.log(deviceTemps)
+      for (const log of deviceTemps.data) {
+        console.log(log)
+        device.logTemp(log)
+      }
+      return device
+    }))
   }
 
   public saveDevice(device: Device) {

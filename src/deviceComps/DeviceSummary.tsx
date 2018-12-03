@@ -10,6 +10,7 @@ import Little from '../components/Little'
 import Flex from '../components/Flex';
 import './DeviceSummary.css'
 import Spacer from '../components/Spacer';
+import SmallChart from './SmallChart';
 
 interface Props {
     device: Device
@@ -51,11 +52,25 @@ class DeviceSummary extends React.Component<Props, State> {
         this.setState({ editMode: !editMode })
     }
 
+    private renderTarget() {
+        const { editMode } = this.state
+        const { device } = this.props
+        if (editMode) {
+            return (
+                <Spacer padTop>Target: <EditableText editing={editMode} onEdit={this.handleEditTarget}>{device.targetTemperatureDisplay}</EditableText></Spacer>
+            )
+        }
+        if (!device.isTempWithinRange) {
+            return <Little padTop>Targeting {device.targetTemperatureDisplay}</Little>
+        }
+    }
+
     public render() {
         const { device } = this.props
         const { editMode } = this.state
 
         const powerIndicatorClass = device.currentState === "ON" ? 'on' : ''
+        const showTarget = editMode || !device.isTempWithinRange
         return (
             <Card modal={editMode}>
                 <CardHeader>
@@ -66,8 +81,9 @@ class DeviceSummary extends React.Component<Props, State> {
                 </CardHeader>
                 <CardBody centered>
                     <Big>{device.currentTemperatureDisplay}</Big>
-                    <Little>Actual Temp</Little>
-                    <Little padTop>Target: <EditableText editing={editMode} onEdit={this.handleEditTarget}>{device.targetTemperatureDisplay}</EditableText></Little>
+                    {!device.isTempWithinRange && <Little>Actual Temp</Little>}
+                    {this.renderTarget()}
+                    <SmallChart logs={device.lastHourTemperatureLog} />
                 </CardBody>
             </Card>
         )

@@ -1,6 +1,7 @@
 import { observable, computed } from 'mobx'
 import _ from 'lodash'
 import appStore, { TemperatureUnit } from '../store/AppStore'
+import moment from 'moment'
 
 export default class Device {
     public _id: string = ""
@@ -9,6 +10,7 @@ export default class Device {
     @observable currentTemperature: number = -1
     @observable targetTemperature?: number = -1
     @observable currentState: string = ""
+    @observable temperatureLogs: Array<any> = []
     version: number = 0
 
     fromJson(json: any) {
@@ -21,6 +23,11 @@ export default class Device {
         this.version = json.version
     }
 
+    @computed get isTempWithinRange() {
+        return this.targetTemperature && this.currentTemperature < this.targetTemperature + 1 &&
+            this.currentTemperature > this.targetTemperature - 1
+    }
+
     @computed get currentTemperatureDisplay() {
         return this.formatTemp(appStore.temperatureUnit, this.currentTemperature, 2)
     }
@@ -29,15 +36,39 @@ export default class Device {
         return this.formatTemp(appStore.temperatureUnit, this.targetTemperature)
     }
 
+    @computed get lastHourTemperatureLog() {
+        const startTime = moment.utc().subtract('hour', 1)
+        return this.temperatureLogs.slice().sort((left: any, right: any) => moment(left.time).diff(right)).filter((value: any) => startTime.isBefore(value.time)).map((value) => {
+            return {
+                deviceId: value.deviceId,
+                time: value.time,
+                temperature: this.convertTemp(appStore.temperatureUnit, value.temperature)
+            }
+        })
+    }
+
+    public logTemp(tempLog: any) {
+        this.temperatureLogs.push({
+            deviceId: tempLog.deviceId,
+            time: tempLog.time,
+            temperature: parseFloat(tempLog.temperature)
+        })
+    }
+
+    private convertTemp(unit: TemperatureUnit, temperature: number) {
+        let value = temperature
+        if (unit === TemperatureUnit.Fahrenheit) {
+            value = (value * 9/5) + 32
+        }
+        return value
+    }
+
     private formatTemp(unit: TemperatureUnit, temperature?: number, decimalPlaces?: number) {
         if (temperature === undefined) {
             return '-'
         }
 
-        let value = temperature
-        if (unit === TemperatureUnit.Fahrenheit) {
-            value = (value * 9/5) + 32
-        }
+        let value = this.convertTemp(unit, temperature)
         let valueString = `${value}`
         valueString = decimalPlaces ? parseFloat(valueString).toFixed(decimalPlaces) : valueString
         return `${valueString}${appStore.temperatureUnit === TemperatureUnit.Celsius ? 'C' : 'F'}`

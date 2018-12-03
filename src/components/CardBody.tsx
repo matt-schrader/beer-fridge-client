@@ -1,8 +1,9 @@
 import React from 'react'
 import './CardBody.css'
+import { BeerChildProps } from '..';
 
 interface Props {
-    children: string | JSX.Element | Array<JSX.Element>
+    children: BeerChildProps
     centered?: boolean
 }
 

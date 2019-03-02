@@ -27,14 +27,14 @@
     "socket.io-client": "^2.1.1",
     "typescript": "^3.1.6"
   },
-  "proxy": "http://localhost:3030/",
+  "proxy": "http://brewery.local:3030/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "docker-build": "docker build -t beer-fridge-client .",
-    "docker-run": "docker run -p 3333:3333 -e PROXY_HOST=beer-fridge:3030 -d --link beer-fridge --name beer-fridge-client beer-fridge-client"
+    "docker-run": "docker run --rm -p 3333:3333 -e PROXY_HOST=beer-fridge:3030 -d --link beer-fridge --name beer-fridge-client beer-fridge-client"
   },
   "eslintConfig": {
     "extends": "react-app"

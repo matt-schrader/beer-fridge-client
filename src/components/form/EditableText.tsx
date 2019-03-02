@@ -21,6 +21,20 @@ export default class EditableText extends React.Component<Props, StateProps> {
         }
     }
 
+    public componentDidMount() {
+        const { editing } = this.props
+        if (editing) {
+            this.enterEditing()
+        }
+    }
+
+    public componentWillUnmount() {
+        const { editing } = this.props
+        if (editing) {
+            this.closeEditing()
+        }
+    }
+
     public componentWillReceiveProps(next: Props) {
         const { editing } = this.props
         if (!editing && next.editing) {
